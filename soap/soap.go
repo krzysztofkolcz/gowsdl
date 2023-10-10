@@ -39,7 +39,7 @@ type SOAPEnvelope struct {
 type SOAPHeaderResponse struct {
 	XMLName xml.Name `xml:"Header"`
 
-	Header interface{} `xml:",omitempty"`
+	Messaging interface{} `xml:",omitempty"`
 }
 
 type SOAPBody struct {
@@ -498,7 +498,7 @@ func (s *Client) call(ctx context.Context, soapAction string, request, response 
 	// so we have to use a namespace-less response envelope
 	respEnvelope := new(SOAPEnvelopeResponse)
 	respEnvelope.Header = &SOAPHeaderResponse{
-		Header: header,
+		Messaging: header,
 	}
 	respEnvelope.Body = SOAPBodyResponse{
 		Content: response,
