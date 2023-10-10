@@ -39,7 +39,7 @@ type SOAPEnvelope struct {
 type SOAPHeaderResponse struct {
 	XMLName xml.Name `xml:"Header"`
 
-	Messaging interface{} `xml:",omitempty"`
+	Header interface{} `xml:",omitempty"`
 }
 
 type SOAPBody struct {
@@ -378,9 +378,9 @@ func (s *Client) CallContext(ctx context.Context, soapAction string, request, re
 	return s.call(ctx, soapAction, request, response, nil, nil, nil)
 }
 
-// CallContext performs HTTP POST request with a context
-func (s *Client) CallContextRetrieve(ctx context.Context, soapAction string, request, response interface{}, headers interface{}) error {
-	return s.call(ctx, soapAction, request, response, nil, nil, headers)
+// CallContextRetrieve performs HTTP POST request with a context and fill the header.
+func (s *Client) CallContextRetrieve(ctx context.Context, soapAction string, request, response interface{}, header interface{}) error {
+	return s.call(ctx, soapAction, request, response, nil, nil, header)
 }
 
 // Call performs HTTP POST request.
@@ -412,7 +412,7 @@ func (s *Client) CallWithFaultDetail(soapAction string, request, response interf
 }
 
 func (s *Client) call(ctx context.Context, soapAction string, request, response interface{}, faultDetail FaultError,
-	retAttachments *[]MIMEMultipartAttachment, headers interface{}) error {
+	retAttachments *[]MIMEMultipartAttachment, header interface{}) error {
 	// SOAP envelope capable of namespace prefixes
 	envelope := SOAPEnvelope{
 		XmlNS: XmlNsSoapEnv,
@@ -498,7 +498,7 @@ func (s *Client) call(ctx context.Context, soapAction string, request, response 
 	// so we have to use a namespace-less response envelope
 	respEnvelope := new(SOAPEnvelopeResponse)
 	respEnvelope.Header = &SOAPHeaderResponse{
-		Messaging: headers,
+		Header: header,
 	}
 	respEnvelope.Body = SOAPBodyResponse{
 		Content: response,
